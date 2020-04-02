@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/zulhfreelancer/blog_with_oauth2/actions"
+	"github.com/zulhfreelancer/buffalo_blog_with_oauth2/actions"
 )
 
 // main is the starting point for your Buffalo application.

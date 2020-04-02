@@ -11,7 +11,7 @@ import (
 	csrf "github.com/gobuffalo/mw-csrf"
 	i18n "github.com/gobuffalo/mw-i18n"
 	"github.com/gobuffalo/packr/v2"
-	"github.com/zulhfreelancer/blog_with_oauth2/models"
+	"github.com/zulhfreelancer/buffalo_blog_with_oauth2/models"
 )
 
 // ENV is used to help switch settings based on where the
@@ -60,6 +60,7 @@ func App() *buffalo.App {
 
 		app.GET("/", HomeHandler)
 
+		app.Resource("/posts", PostsResource{})
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
 
