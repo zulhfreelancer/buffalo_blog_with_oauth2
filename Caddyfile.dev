@@ -1,0 +1,5 @@
+localhost:3001 {
+  bind {$ADDRESS}
+  proxy / localhost:3000
+  tls ssl-certs/localhost.pem ssl-certs/localhost-key.pem
+}

@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"os"
+
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/envy"
 	forcessl "github.com/gobuffalo/mw-forcessl"
@@ -12,6 +14,8 @@ import (
 	i18n "github.com/gobuffalo/mw-i18n"
 	"github.com/gobuffalo/packr/v2"
 	"github.com/zulhfreelancer/buffalo_blog_with_oauth2/models"
+
+	"github.com/markbates/goth/gothic"
 )
 
 // ENV is used to help switch settings based on where the
@@ -38,6 +42,7 @@ func App() *buffalo.App {
 		app = buffalo.New(buffalo.Options{
 			Env:         ENV,
 			SessionName: "_blog_with_oauth2_session",
+			Host:        os.Getenv("HOST"),
 		})
 
 		// Automatically redirect to SSL
@@ -58,9 +63,27 @@ func App() *buffalo.App {
 		// Setup and use translations:
 		app.Use(translations())
 
+		// Public pages with no namespace
 		app.GET("/", HomeHandler)
 
-		app.Resource("/posts", PostsResource{})
+		// Enable middlewares
+		app.Use(SetCurrentUser)
+		app.Use(Authorize)
+		app.Middleware.Skip(Authorize, HomeHandler)
+
+		// Exclude "/auth" and "/auth/callback" from middleware
+		auth := app.Group("/auth")
+		bah := buffalo.WrapHandlerFunc(gothic.BeginAuthHandler)
+		auth.GET("/{provider}", bah)
+		auth.GET("/{provider}/callback", AuthCallback)
+		auth.DELETE("", AuthDestroy).Name("LogoutPath")
+		auth.Middleware.Skip(Authorize, bah, AuthCallback)
+
+		// Exlude "/posts" and "/posts/:id" from middleware
+		postResource := PostsResource{&buffalo.BaseResource{}}
+		postResourceGroup := app.Resource("/posts", postResource)
+		postResourceGroup.Middleware.Skip(Authorize, postResource.List, postResource.Show)
+
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
 

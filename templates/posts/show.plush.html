@@ -5,8 +5,10 @@
     <%= linkTo(postsPath(), {class: "btn btn-info"}) { %>
       Back to all Posts
     <% } %>
-    <%= linkTo(editPostPath({ post_id: post.ID }), {class: "btn btn-warning", body: "Edit"}) %>
-    <%= linkTo(postPath({ post_id: post.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+    <%= if (current_user) { %>
+      <%= linkTo(editPostPath({ post_id: post.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+      <%= linkTo(postPath({ post_id: post.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+    <% } %>
   </div>
 </div>
 

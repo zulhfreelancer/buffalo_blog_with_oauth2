@@ -24,4 +24,5 @@ jhw.*
 dist/
 generated/
 .vendor/
-
+ssl-certs/localhost.pem
+ssl-certs/localhost-key.pem

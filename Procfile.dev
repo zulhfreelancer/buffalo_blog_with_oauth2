@@ -1,0 +1,2 @@
+buffalo: buffalo dev
+caddy: caddy -conf Caddyfile.dev
